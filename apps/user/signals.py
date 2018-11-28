@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+"""
+@version: 1.0
+@author: Lindes
+"""
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.contrib.auth import get_user_model
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
+User = get_user_model()
+
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        password = instance.password
+        instance.set_password(password)
+        instance.save()
